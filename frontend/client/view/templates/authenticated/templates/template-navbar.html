@@ -1,0 +1,32 @@
+{{define "authenticatednavbar"}}
+<!-- Dropdown Trigger -->
+   
+      <!-- Dropdown Structure -->
+      <ul id='dropdown1' class='dropdown-content'>
+        <li><a class="yellow text-blue" href="/user/profile">Profile</a></li>
+        <li><a class="yellow text-blue" href="/user/home">Home</a></li>
+        <li class="divider"></li>
+        <li><a class="blue-text" href="/user/logout"><i class="material-icons">cloud</i>Logout</a></li>        
+      </ul>
+
+
+  <nav class="nav white">
+    <div class="nav-wrapper">
+      <a href="/user/home" class="brand-logo blue-text">HEXERENT</a>
+      <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a class='dropdown-button btn blue lighten-1 white-text' href='#' data-activates='dropdown1'>Go</a></li>        
+        <li><a class="btn btn-flat waves-ripple blue lighten-1 white-text" href="/user/chat">Chat</a></li>
+      </ul>
+
+    
+      <ul class="side-nav" id="mobile-demo">
+        <li><a class="btn btn-flat waves-ripple blue lighten-1 white-text" href="/user/chat">Chat</a></li>
+      </ul>
+    </div>
+  </nav>
+
+
+
+
+{{end}}

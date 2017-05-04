@@ -1,0 +1,24 @@
+{{define "homefeeds"}}
+   
+<div id="home-feeds">
+    {{ range $value := .PostsLists}}
+    <li class="card hoverable z-depth-3">{{ $value }}
+        
+        <p><h6>Name of author </h6><h6>Date here</h6></p>
+      
+        
+        
+        <p><h6>Here is some text for the summary of the post...</h6></p>
+        <p><a href="#">More</a></p>
+        <br>
+        <a class="btn gray lighten-4 text-teal">Like</a>
+        <a class="btn gray lighten-4 text-teal">Upvote</a>
+        <a class="btn gray lighten-4 text-teal">Downvote</a>
+        <a class="btn gray lighten-4 text-teal">Comment</a>
+        <a class="btn gray lighten-4 text-teal">Share</a>
+           
+    </li>
+     {{ end }}
+</div>
+
+{{end}}

@@ -1,0 +1,107 @@
+{{template "authenticatedheader"}}
+{{template "authenticatednavbar"}}
+
+
+<section>
+  <div class="row">
+    <div class="col m2">
+        <div>
+          {{template "links"}}
+        </div>
+    </div>
+    <div class="col m5">
+        <div>
+            <div class="card">
+              <div class="card-content grey lighten-4">
+                <div id="test4">
+                  <h5 class="blue-text">Say something</h5>
+                    <form method="POST" accept-charset="utf-8">
+                      <input type="text" name="homeFeedPost" placeholder="what's up?">
+                      <button class="btn btn-flat white blue-text" name="sendemail">Post</button>                    
+                    </form>                  
+                </div>
+                <div id="test5">
+                 <h5 class="blue-text">Take a pic</h5>
+                    <form method="POST" accept-charset="utf-8">
+                      <input type="text" name="emailReceiver" placeholder="email">
+                      <button class="btn btn-flat white blue-text" name="sendemail">Post</button>                    
+                    </form>
+                </div>
+            
+              </div>
+              <div class="card-tabs">
+                <ul class="tabs tabs-fixed-width">
+                  <li class="tab"><a class="active" href="#test4">Test 1</a></li>
+                  <li class="tab"><a href="#test5">Test 2</a></li>
+                </ul>
+              </div>
+
+            </div>
+        </div>
+        <div>
+         
+        </div>
+    </div>
+    <div class="col m3">
+        3
+    </div>
+    <div class="col m2">
+        4
+    </div>
+  </div>
+</section>
+
+
+
+<section>
+  <div>
+    <div>
+      <div>
+        Home {{.Sess1.UserName}}
+        Are you a first time user? {{.Sess2}}
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section>
+   
+<div class="row">
+  <div class="col m2">
+
+  </div>
+  <div class="col m5"> 
+      <div id="home-feeds">
+          {{ range $value := .PostsLists}}
+          <li class="card hoverable z-depth-3">
+              
+              <p><h6>Name of author </h6><h6>Date here</h6></p>
+            
+              <h4 class="blue-text">{{ $value }}</h4>
+              
+              <p><h6>Here is some text for the summary of the post...</h6></p>
+              <p><a href="#">More</a></p>
+              <br>
+              <a class="btn gray lighten-4 text-blue">Like</a>
+              <a class="btn gray lighten-4 text-teal">Upvote</a>
+              <a class="btn gray lighten-4 text-red">Downvote</a>
+              <a class="h5 text-teal">Comment</a>
+              <a class="h5 text-blue">Share</a>
+                
+          </li>
+          {{ end }}
+      </div>
+  </div>
+  <div class="col m3">
+    
+  </div>
+  <div class="col m2">
+    
+  </div>
+</div>
+</section>
+
+
+
+{{template "authenticatedfooter"}}

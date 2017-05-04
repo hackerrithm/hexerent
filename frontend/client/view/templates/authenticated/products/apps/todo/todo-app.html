@@ -1,0 +1,30 @@
+{{define "title"}}{{.UserName}} Profile{{end}}
+{{template "authenticatedheader"}}
+{{template "authenticatednavbar"}}
+
+<section>
+  <div class="row">
+    <div class="col s1 m1 l1">
+    	<ul>
+	    	<li>
+	    		<a href="/user/profile/apps/todo/create" class="btn btn-flat waves-ripple blue lighten-1">Create</a>
+	    	</li>
+    	</ul>
+    </div>
+    <div class="col s2 m2 l2"> 
+    	2   	
+    </div>
+    <div class="col s7 m7 l7">
+
+          {{range $n := .listTodos}}
+                <div class="card">{{$n}}</div>
+            {{end}}
+    </div>
+    <div class="col s2 m2 l2">  
+    	<pre>{{.listTodos}}</pre>
+    </div>
+  </div>
+</section>
+
+
+{{template "authenticatedfooter"}}

@@ -1,0 +1,31 @@
+{{define "title"}}{{.UserName}} Profile{{end}}
+{{template "authenticatedheader"}}
+{{template "authenticatednavbar"}}
+
+<section>
+  <div class="row">
+    <div class="col m1">
+    	1
+    </div>
+    <div class="col m2"> 
+    	2   	
+    </div>
+    <div class="col m7">
+    	3
+    </div>
+    <div class="col m2">  
+    	4  	
+    </div>
+  </div>
+</section>
+<section>
+  <div>
+    <div>
+      <div>
+        Sesttings {{.Sess1.UserName}}
+      </div>
+    </div>
+  </div>
+</section>
+
+{{template "authenticatedfooter"}}

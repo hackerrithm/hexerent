@@ -1,0 +1,28 @@
+{{define "title"}}{{.UserName}} Profile{{end}}
+{{template "authenticatedheader"}}
+{{template "authenticatednavbar"}}
+<section>
+    <div class="container">
+        <div class="row">
+            <div class="col m6">
+                <div id="log" class="card hoverable z-depth-3 teal lighten-2 white-text"></div>
+            </div>
+            <div class="col m3">
+                
+            </div>
+            <div class="col m3">
+                
+            </div>
+        </div>
+        <form id="form">
+            <input type="submit" value="Send" />
+            <input type="text" id="msg" size="64"/>
+        </form>
+    </div>
+</section>
+
+<section>
+    check out my wicked username: {{.Sess1.UserName}}, you are great!!!
+</section>
+
+{{template "authenticatedfooter"}}

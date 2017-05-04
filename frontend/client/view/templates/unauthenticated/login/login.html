@@ -1,0 +1,58 @@
+
+{{template "header"}}
+{{template "navbar"}}
+
+    <div class="container">
+        <form method="POST">
+            <div id="login-page" class="row center">
+                <div class="col s12 z-depth-6 card-panel">
+                    <div class="row">
+                        <div class="input-field col s12 center">
+                            <img src="/public/images/titan.jpg" width="40" height="40" alt="" id="logo" class="responsive-img valign profile-image-login" />
+                            <h4 class="center login-form-text">Login Form</h4>
+                        </div>
+                    </div>
+                    <div class="row margin">
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix">account_circle</i>
+                            <input type="text" id="txtUserNameBox" name="username" />
+                            <label for="txtUserNameBox">UserName</label>
+                        </div>
+
+                    </div>
+                    <div class="row margin">
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix">lock</i>
+                            <input type="password" id="txtPasswordBox" name="password" />
+                            <label for="txtPasswordBox">Password</label>
+                        </div>
+                        </div>
+                    <div class="row">
+                        <div class="input-field col s12 m12 l12  login-text">
+                        <!-- -->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <!--<input type="submit" class="btn btn-flat">-->
+                            <button type="submit" class="btn btn-flat blue text-white">Login</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s6 m6 l6">
+                            <p class="margin medium-small"><a href="/register">Register Now!</a></p>
+                        </div>
+                        <div class="input-field col s6 m6 l6">
+                            <p class="margin right-align medium-small"><a href="forgot-password.html">Forgot password?</a></p>
+                        </div>
+                    </div>
+                    <!--<input type="hidden" name="token" value="{{.}}">-->
+                </div>
+            </div>
+        </form>
+    </div> <!-- contaniner -->
+
+    <br>
+
+
+{{template "footer"}}
