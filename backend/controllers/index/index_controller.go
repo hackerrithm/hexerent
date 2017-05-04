@@ -49,8 +49,8 @@ func (mail *Mail) BuildMessage() string {
 func SendMail(r *http.Request) {
 
 	mail := Mail{}
-	mail.senderId = "jagreen1010@gmail.com"
-	mail.toIds = []string{"jagreen1010@gmail.com", r.FormValue("emailReceiver")}
+	mail.senderId = "your.email@gmail.com"
+	mail.toIds = []string{"your.email@gmail.com", r.FormValue("emailReceiver")}
 	mail.subject = "Hexerent Subscription"
 	mail.body = "Hi \n\nThanks for subscribing to Hexerent."
 
@@ -60,7 +60,7 @@ func SendMail(r *http.Request) {
 
 	log.Println(smtpServer.host)
 	//build an auth
-	auth := smtp.PlainAuth("", mail.senderId, "technology12", smtpServer.host)
+	auth := smtp.PlainAuth("", mail.senderId, "your.password", smtpServer.host)
 
 	// Gmail will reject connection if it's not secure
 	// TLS config
