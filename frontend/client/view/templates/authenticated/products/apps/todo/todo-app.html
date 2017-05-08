@@ -16,12 +16,12 @@
     </div>
     <div class="col s7 m7 l7">
 
-          {{range $n := .listTodos}}
-                <div class="card">{{$n}}</div>
+          {{range $n := .Todo}}
+                <li class="card">{{$n}}</li>
             {{end}}
     </div>
     <div class="col s2 m2 l2">  
-    	<pre>{{.listTodos}}</pre>
+    	
     </div>
   </div>
 </section>

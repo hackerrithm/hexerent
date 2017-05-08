@@ -3,9 +3,7 @@ package todo
 import (
 	"encoding/json"
 	"fmt"
-	"hexerent/backend/config"
 	"hexerent/backend/models"
-	"hexerent/backend/session"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -24,60 +22,45 @@ func errorCheck(r http.ResponseWriter, err error) bool {
 	return false
 }
 
-func jsonResponse(res http.ResponseWriter, data interface{}) {
+func jsonResponse(res http.ResponseWriter, data interface{}) string {
 	res.Header().Set("Content-Type", "application/json; charset=utf-8")
 
 	payload, err := json.Marshal(data)
 	if errorCheck(res, err) {
-		return
+		fmt.Println(err)
+		//return
 	}
 
-	fmt.Fprintf(res, string(payload))
+	//fmt.Fprintf(res, string(payload))
+	return string(payload)
 }
 
 // Index renders the home.html file
-func Index(w http.ResponseWriter, r *http.Request) {
+func Index(w http.ResponseWriter, r *http.Request) []string { //[]models.Todo {
 
-	if r.Method == http.MethodGet || r.Method == "GET" {
+	var todoLists = models.RepoFindAllTodos()
 
-		var todoLists = models.RepoFindAllTodos()
+	var v string // models.Todo
 
-		var v models.Todo
+	var listTodos []string //[]models.Todo
 
-		var listTodos []models.Todo
+	for _, v = range todoLists {
 
-		for _, v = range todoLists {
-
-			listTodos = append(listTodos, v)
-
-		}
-
-		jsonResponse(w, listTodos)
+		listTodos = append(listTodos, v)
 
 	}
 
-}
+	//listOfTodos := jsonResponse(w, listTodos)
+	return listTodos //listOfTodos
 
-// TodoAppCreateClicked stuff
-func TodoAppCreateClicked(w http.ResponseWriter, r *http.Request) {
-
-	sesString, _ := session.GlobalSession.Values["user"]
-
-	if r.Method == http.MethodGet || r.Method == "GET" {
-
-		config.Tpl.ExecuteTemplate(w, "todo-app-create.html", sesString)
-
-	} else if r.Method == http.MethodPost || r.Method == "POST" {
-		Create(w, r)
-	}
 }
 
 // Create stuff
 func Create(w http.ResponseWriter, r *http.Request) {
 
-	name := "Create a front end" //r.FormValue("name")
-	completed := ""              //r.FormValue("completed")
-	dueDate := "2023-Jan-02"     //r.FormValue("due")
+	name := r.FormValue("name")
+	completed := r.FormValue("completed")
+	dueDate := r.FormValue("due")
 
 	var a = completed
 	var completedTask bool
@@ -95,7 +78,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 
 	todo := models.NewTodo(0, name, completedTask, enteredTime)
 
-	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
+	/*body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
 		panic(err)
 	}
@@ -108,12 +91,9 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		if err := json.NewEncoder(w).Encode(err); err != nil {
 			panic(err)
 		}
-	}
+	}*/
 
-	t := models.RepoCreateTodo(todo)
-	jsonResponse(w, t)
-
-	fmt.Println("this is todo id final:", t.TodoID)
+	models.RepoCreateTodo(todo)
 
 }
 

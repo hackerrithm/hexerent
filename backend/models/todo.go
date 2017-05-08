@@ -62,10 +62,11 @@ func RepoFindTodo(id int64) Todo {
 }
 
 // RepoFindAllTodos stuff
-func RepoFindAllTodos() []Todo {
+func RepoFindAllTodos() []string /*[]Todo*/ {
 
 	// empty list of Todos
-	todoLists := []Todo{}
+	//todoLists := []Todo{}
+	todoLists := []string{}
 
 	const shortForm = "2006-Jan-02"
 	enteredTime, _ := time.Parse(shortForm, "2011-01-19")
@@ -99,15 +100,11 @@ func RepoFindAllTodos() []Todo {
 		if err != nil {
 			fmt.Println(err)
 		}
-		fmt.Println(todoid, " this is id")
-		fmt.Println(name, " this is name")
+
 		completed = false
 		if len(tinyInt) == 1 && tinyInt[0] == 1 {
 			completed = true
 		}
-
-		fmt.Println(completed, " this is completed")
-		fmt.Println(due, " this is due")
 
 		enteredTime2, _ := time.Parse(shortForm, due)
 
@@ -116,17 +113,11 @@ func RepoFindAllTodos() []Todo {
 		todo.Completed = completed
 		todo.Due = enteredTime2
 
-		todoLists = append(todoLists, Todo{todo.TodoID,
-			todo.Name,
-			todo.Completed,
-			todo.Due})
-
-		//fmt.Printf("/n/nthis is todoLists: ", todoLists)
-
+		todoLists = append(todoLists, todo.Name) /*Todo{todo.TodoID,
+		todo.Name,
+		todo.Completed,
+		todo.Due}*/
 	}
-	fmt.Println("")
-	fmt.Println("")
-	fmt.Println("this is todoLists final: ", todoLists)
 
 	DB.Close()
 
@@ -159,9 +150,6 @@ func RepoCreateTodo(td *Todo) Todo {
 		fmt.Println(err)
 	}
 
-	fmt.Println(id)
-	fmt.Println(td.Name, " this is todo.name")
-	fmt.Println(td, " this is todo")
 	td.TodoID = id
 
 	DB.Close()
@@ -188,9 +176,6 @@ func RepoUpdateTodo(id int64, td *Todo) Todo {
 		fmt.Println(err)
 	}
 
-	fmt.Println(id)
-	fmt.Println(td.Name, " this is todo.name")
-	fmt.Println(td, " this is todo")
 	td.TodoID = id
 
 	DB.Close()

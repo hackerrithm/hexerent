@@ -10,7 +10,7 @@ import (
 	"regexp"
 )
 
-// RegisterValidator validates register
+// RegisterValidator validates Register
 func RegisterValidator(w http.ResponseWriter, r *http.Request, isValidInformation bool) bool {
 	r.ParseForm()
 

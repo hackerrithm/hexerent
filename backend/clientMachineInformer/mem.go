@@ -6,12 +6,12 @@ import (
 	"github.com/shirou/gopsutil/mem"
 )
 
-// MemoryData does stuff
+// MemoryData analyses system data such as memory usage
 func MemoryData() {
 	v, _ := mem.VirtualMemory()
 
 	// almost every return value is a struct
-	fmt.Printf("Total: %v,\n Free:%v,\n UsedPercent:%f%%\n\n", v.Total, v.Free, v.UsedPercent)
+	fmt.Printf("\n\n\t\tTotal: %v,\n\t\tFree:%v,\n\t\tUsedPercent:%f%%\n\n", v.Total, v.Free, v.UsedPercent)
 
 	// convert to JSON. String() is also implemented
 	fmt.Println(v)

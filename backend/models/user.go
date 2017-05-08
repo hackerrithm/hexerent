@@ -142,6 +142,7 @@ func InsertNewUser(userName, firstName, lastName, password, email string) Studen
 
 }
 
+// FindUser stuff
 func FindUser(userName, password string) (Student, bool) {
 
 	user := NewStudent(NewUser(1, userName, "", "", "", "", "", "", "", "", "", ""), "", 0.00)

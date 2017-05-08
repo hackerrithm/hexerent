@@ -8,21 +8,16 @@ import (
 	"strings"
 )
 
-var TplAuthenticated *template.Template
-var TplUnauthenticated *template.Template
-
-var TplUnauthenticatedAbout *template.Template
+// Tpl creates a pointer varriable used to execute templates
 var Tpl *template.Template
 
+// init runs when the program executes
 func init() {
-	//TplAuthenticated = template.Must(template.ParseGlob("./frontend/client/view/templates/authenticated/*.html"))
-	//TplUnauthenticated = template.Must(template.ParseGlob("./frontend/client/view/templates/unauthenticated/*.html"))
-	//TplUnauthenticatedAbout = template.Must(template.ParseGlob("./frontend/client/view/templates/unauthenticated/about/*.html"))
-
 	Tpl = template.Must(ParseTemplates(), nil)
-
 }
 
+// ParseTemplates parses all html documents in the location
+// and returns a pointer of type Template
 func ParseTemplates() *template.Template {
 	templ := template.New("")
 	err := filepath.Walk("./frontend/client/view/templates/", func(path string, info os.FileInfo, err error) error {
