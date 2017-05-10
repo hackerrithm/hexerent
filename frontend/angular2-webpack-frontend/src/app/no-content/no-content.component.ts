@@ -3,8 +3,21 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'no-content',
   template: `
-    <div>
-      <h1>404: page missing</h1>
+  <div class="row">
+      <div classs="col m12">
+              <div class="card hoverable">
+                      <div class="card-image">
+                      <img src="https://www.hover.com/blog/wp-content/uploads/2015/08/404-page-error.png" height="520">
+                      <span class="card-title">404</span>
+                      </div>
+                      <div class="card-content">
+                      <p>This is no place to be.</p>
+                      </div>
+                      <div class="card-action">
+                      <a href="/" class="btn red darken-1">Go to home page</a>
+                      </div>
+                  </div>
+      </div>
     </div>
   `
 })

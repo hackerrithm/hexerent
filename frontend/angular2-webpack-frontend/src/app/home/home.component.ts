@@ -3,9 +3,10 @@ import {
   OnInit
 } from '@angular/core';
 
-import { AppState } from '../app.service';
+import { HomeService } from './home.service';
 import { Title } from './title';
 import { XLargeDirective } from './x-large';
+import { Post } from "./post";
 
 @Component({
   // The selector is what angular internally uses
@@ -14,7 +15,7 @@ import { XLargeDirective } from './x-large';
   selector: 'home',  // <home></home>
   // We need to tell Angular's Dependency Injection which providers are in our app.
   providers: [
-    Title
+    Title, HomeService
   ],
   // Our list of styles in our component. We may add more to compose many styles together
   styleUrls: [ './home.component.css' ],
@@ -26,18 +27,43 @@ export class HomeComponent implements OnInit {
   public localState = { value: '' };
   // TypeScript public modifiers
   constructor(
-    public appState: AppState,
+    public homeService: HomeService,
     public title: Title
   ) {}
 
+  posts: Post[];
+  errorMessage: string;
+
+  getPosts() {
+        this.homeService.getPosts()
+            .subscribe(
+                posts => this.posts = posts,
+                error => this.errorMessage = <any>error
+            )
+    }
+
+
+   createPost(post: Post) {
+        if (!post.body) return;
+        this.homeService.addPost(post)
+            .subscribe(
+                newPost => this.posts = [newPost, ...this.posts],
+                error => this.errorMessage = <any>error
+            )
+            
+    }
+
   public ngOnInit() {
-    console.log('hello `Home` component');
+    console.log('Hello Kemz `Home` component');
+    console.log("Kemar is cool");
+    
     // this.title.getData().subscribe(data => this.data = data);
+    this.getPosts();
   }
 
   public submitState(value: string) {
     console.log('submitState', value);
-    this.appState.set('value', value);
+    this.homeService.set('value', value);
     this.localState.value = '';
   }
 }

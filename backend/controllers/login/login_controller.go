@@ -22,7 +22,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		h := md5.New()
 		io.WriteString(h, strconv.FormatInt(crutime, 10))
 		token := fmt.Sprintf("%x", h.Sum(nil))
-		config.Tpl.ExecuteTemplate(w, "login.html", token)
+		fmt.Println(token)
+		config.Tpl2.ExecuteTemplate(w, "index.html", nil)
 	} else if r.Method == http.MethodPost || r.Method == "POST" {
 		r.ParseForm()
 		/*token := r.Form.Get("token")

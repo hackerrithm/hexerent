@@ -57,7 +57,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("method: ", r.Method) // r.Method used for getting the request method
 	if r.Method == http.MethodGet || r.Method == "GET" {
 		// Just display the page for registration
-		config.Tpl.ExecuteTemplate(w, "register.html", nil)
+		config.Tpl2.ExecuteTemplate(w, "index.html", nil)
 
 	} else if r.Method == http.MethodPost || r.Method == "POST" {
 
@@ -91,7 +91,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 			http.Redirect(w, r, "/user/home", http.StatusSeeOther)
 		}
 		//goAhead = false
-		config.Tpl.ExecuteTemplate(w, "register.html", nil)
+		config.Tpl2.ExecuteTemplate(w, "index.html", nil)
 
 	} else {
 		log.Fatalln("dangerous things are going on")

@@ -48,8 +48,8 @@ func (mail *Mail) BuildMessage() string {
 func SendMail(r *http.Request) {
 
 	mail := Mail{}
-	mail.senderId = "your.email@gmail.com"
-	mail.toIds = []string{"your.email@gmail.com", r.FormValue("emailReceiver")}
+	mail.senderId = "jagreen1010@gmail.com"
+	mail.toIds = []string{"jagreen1010@gmail.com", r.FormValue("emailReceiver")}
 	mail.subject = "Hexerent Subscription"
 	mail.body = "Hi \n\nThanks for subscribing to Hexerent."
 
@@ -59,7 +59,7 @@ func SendMail(r *http.Request) {
 
 	log.Println(smtpServer.host)
 	//build an auth
-	auth := smtp.PlainAuth("", mail.senderId, "your.password", smtpServer.host)
+	auth := smtp.PlainAuth("", mail.senderId, "technology12", smtpServer.host)
 
 	// Gmail will reject connection if it's not secure
 	// TLS config
@@ -122,10 +122,9 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 		SendMail(r)
 
-		config.Tpl.ExecuteTemplate(w, "index.html", nil)
-	} else if r.Method == http.MethodGet || r.Method == "GET" {
+		config.Tpl2.ExecuteTemplate(w, "index.html", nil)
 
-		// Page visits
+	} else if r.Method == http.MethodGet || r.Method == "GET" {
 
 		pageVisits, err := r.Cookie("cookie-page-visit-counter")
 
@@ -162,12 +161,16 @@ func Index(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(string(bs))
 		*/
 
-		config.Tpl.ExecuteTemplate(w, "index.html", nil)
+		config.Tpl2.ExecuteTemplate(w, "index.html", nil)
+		//w.Header().Set("Content-Type", "text/html; charset=UTF-8")
+		//w.WriteHeader(http.StatusOK)
+
 	}
 
 }
 
 // About renders the about.html file
 func About(w http.ResponseWriter, r *http.Request) {
-	config.Tpl.ExecuteTemplate(w, "about.html", nil)
+	//config.Tpl.ExecuteTemplate(w, "about.html", nil)
+	config.Tpl2.ExecuteTemplate(w, "index.html", nil)
 }

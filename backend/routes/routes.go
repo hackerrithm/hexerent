@@ -49,8 +49,8 @@ func NewRouter() *mux.Router {
 	go hub.Run()
 
 	var routes = Routes{
-		//Route{"Index", "GET", "/", index.Index},
-		//Route{"Index", "POST", "/", index.Index},
+		Route{"Index", "GET", "/", index.Index},
+		Route{"Index", "POST", "/", index.Index},
 		Route{"About", "GET", "/about", index.About},
 		Route{"Register", "GET", "/register", register.Register},
 		Route{"Register", "POST", "/register", register.Register},

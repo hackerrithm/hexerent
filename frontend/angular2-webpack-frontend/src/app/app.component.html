@@ -1,0 +1,51 @@
+<div class="nav-fixed">
+    <nav class="nav-fixed blue">
+      <div class="nav-wrapper">
+        <a [routerLink]=" ['/'] "
+          routerLinkActive="active" [routerLinkActiveOptions]= "{exact: true}" class="brand-logo white-text">HEXERENT</a>
+        <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">            
+
+          <li><a class="white-text" [routerLink]=" ['/about'] "
+          routerLinkActive="active" [routerLinkActiveOptions]= "{exact: true}">About</a></li>
+          <li><a class="white-text" [routerLink]=" ['/login'] "
+          routerLinkActive="active" [routerLinkActiveOptions]= "{exact: true}">Login</a></li>
+          <li><a class="white-text" [routerLink]=" ['/register'] "
+          routerLinkActive="active" [routerLinkActiveOptions]= "{exact: true}">Register</a></li>
+        </ul>
+        <ul class="side-nav purple" id="mobile-demo">
+
+          <li><a class="white-text" [routerLink]=" ['/about'] "
+          routerLinkActive="active" [routerLinkActiveOptions]= "{exact: true}">About</a></li>
+          <li><a class="white-text" [routerLink]=" ['/login'] "
+          routerLinkActive="active" [routerLinkActiveOptions]= "{exact: true}">Login</a></li>
+          <li><a class="white-text" [routerLink]=" ['/register'] "
+          routerLinkActive="active" [routerLinkActiveOptions]= "{exact: true}">Register</a></li>
+        </ul>
+      </div>
+    </nav>
+</div>   
+
+    <main>
+      <router-outlet></router-outlet>
+    </main>
+
+<footer class="page-footer white">
+  <div class="footer-copyright white">
+    <div class="container white"> 
+      <div class="row">
+        <div class="col l12 s12">
+            <div class="container"> 
+              <a class="black-text text-darken-5 right"
+                [routerLink]=" ['/about'] ">About</a>
+              <a class="text-black text-darken-5 right"
+                href="#!">More Links</a>
+              <a class="text-black text-darken-5 right"
+                href="#!">More Links</a>  
+              <h6 class="black-text">© 2014 Copyright Text</h6>
+            </div>  
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
