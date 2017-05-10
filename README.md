@@ -1,6 +1,6 @@
 <h2>hexerent</h2>
 <hr>
-<p>A social networking app written in <strong>Go</strong><p/>
+<p>A Web App written in <strong>Go</strong><p/>
 
 
 <div>
