@@ -3,24 +3,43 @@ package models
 import (
 	"fmt"
 	"hexerent/backend/database"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
 // User struct
 type User struct {
-	UserID       int64
-	UserName     string `json:"username"`
-	FirstName    string `json:"firstname"`
-	LastName     string `json:"lastname"`
-	Password     string `json:"password"`
-	EmailAddress string `json:"emailaddress"`
-	Country      string `json:"country"`
-	City         string `json:"city"`
-	ZipCode      string `json:"zipcode"`
-	AreaCode     string `json:"areacode"`
-	Number       string `json:"number"`
-	Extention    string `json:"ext"`
+	UserID       uint64
+	UserName     string    `json:"username"`
+	FirstName    string    `json:"firstname"`
+	LastName     string    `json:"lastname"`
+	Password     string    `json:"password"`
+	EmailAddress string    `json:"emailaddress"`
+	Picture      string    `json:"picture"`
+	DateOfBirth  time.Time `json:"dateOfBirth"`
+	address      Address
+	contact      Contact
+	Status       string    `json:"status"`
+	Role         string    `json:"role"`
+	Type         string    `json:"type"`
+	DateJoined   time.Time `json:"dateJoined"`
+}
+
+// Address contains user address
+type Address struct {
+	AddressID uint64
+	Country   string `json:"country"`
+	City      string `json:"city"`
+	ZipCode   string `json:"zipcode"`
+}
+
+// Contact contains user contact information
+type Contact struct {
+	ContactID uint64
+	AreaCode  string `json:"areacode"`
+	Number    string `json:"number"`
+	Extention string `json:"ext"`
 }
 
 // Student struct
@@ -38,21 +57,24 @@ type Employee struct {
 }
 
 // NewUser : Acts as a constructor
-func NewUser(userid int64, username, firstname, lastname, password, emailaddress,
-	number, areacode, extention,
-	country, city, zipcode string) *User {
+func NewUser(userid uint64, username, firstname, lastname, password, emailaddress string,
+	addressid uint64, country, city, zipcode string,
+	contactid uint64, number, areacode, extention string) *User {
 	user := new(User)
+	user.UserID = userid
 	user.UserName = username
 	user.FirstName = firstname
 	user.LastName = lastname
 	user.EmailAddress = emailaddress
 	user.Password = password
-	user.Country = country
-	user.City = city
-	user.ZipCode = zipcode
-	user.AreaCode = areacode
-	user.Number = number
-	user.Extention = extention
+
+	user.address = Address{
+		addressid, country, city, zipcode,
+	}
+
+	user.contact = Contact{
+		contactid, number, areacode, extention,
+	}
 
 	return user
 }
@@ -79,6 +101,7 @@ func NewEmployee(usr *User, company string, money float32) *Employee {
 	return emp
 }
 
+/*
 // SayHi : Method
 func (u User) SayHi() {
 	fmt.Printf("Hi, I am %s you can call me Mr. %s\n", u.FirstName, u.LastName)
@@ -102,9 +125,10 @@ type Men interface {
 	SayHi()
 	Sing(lyrics string)
 }
+*/
 
-// InsertNewUser inserts a new user in the sql database
-func InsertNewUser(userName, firstName, lastName, password, email string) Student {
+// InsertNewStudent inserts a new user in the sql database
+func InsertNewStudent(userName, firstName, lastName, password, email string) Student {
 	DB, err := database.NewOpen()
 
 	var insertStatement = "INSERT user SET UserName=?,FirstName=?,LastName=?, Password=?, EmailAddress=?"
@@ -134,18 +158,18 @@ func InsertNewUser(userName, firstName, lastName, password, email string) Studen
 		fmt.Println(err)
 	}
 
-	fmt.Println(id)
+	unsignedID := uint64(id)
 
-	account := NewStudent(NewUser(id, userName, firstName, lastName, password, email, "", "", "", "", "", ""), "", 0.00)
+	account := NewStudent(NewUser(unsignedID, userName, firstName, lastName, password, email, 1, "", "", "", 1, "", "", ""), "", 0.00)
 
 	return *account
 
 }
 
-// FindUser stuff
-func FindUser(userName, password string) (Student, bool) {
+// FindStudent stuff
+func FindStudent(userName, password string) (uint64, Student, bool) {
 
-	user := NewStudent(NewUser(1, userName, "", "", "", "", "", "", "", "", "", ""), "", 0.00)
+	user := NewStudent(NewUser(1, userName, "", "", "", "", 1, "", "", "", 1, "", "", ""), "", 0.00)
 
 	foundRecord := false
 
@@ -163,9 +187,23 @@ func FindUser(userName, password string) (Student, bool) {
 
 	//var databaseUsername string
 	var databasePassword string
-	var id int64
+	var id uint64
 
-	err = DB.QueryRow("SELECT * FROM user WHERE UserName=?", user.UserName).Scan(&id, &user.UserName, &user.FirstName, &user.LastName, &databasePassword, &user.EmailAddress)
+	err = DB.QueryRow("SELECT * FROM user WHERE UserName=?", user.UserName).Scan(&id,
+		&user.UserName,
+		&user.FirstName,
+		&user.LastName,
+		&databasePassword,
+		&user.EmailAddress,
+		&user.Picture,
+		&user.DateOfBirth,
+		&user.address.AddressID,
+		&user.contact.ContactID,
+		&user.Status,
+		&user.Role,
+		&user.Type,
+		&user.DateJoined,
+	)
 
 	if err != nil {
 		fmt.Println(err)
@@ -181,14 +219,17 @@ func FindUser(userName, password string) (Student, bool) {
 	} else {
 		foundRecord = true
 	}
+
 	user.UserName = userName
 	user.Password = string([]byte(databasePassword))
 	user.UserID = id
 	fmt.Println(user.UserName, user.Password)
-	account := NewStudent(NewUser(user.UserID, user.UserName, "", "", user.Password, "", "", "", "", "", "", ""), "", 0.00)
+	account := NewStudent(NewUser(id, user.UserName, "", "", user.Password, "", 1, "", "", "", 1, "", "", ""), "", 0.00)
 	fmt.Println("account username: ", account.UserName)
+
+	fmt.Println("account userID: ", id)
 	fmt.Println(account)
 
-	return *account, foundRecord
+	return id, *account, foundRecord
 
 }

@@ -15,11 +15,12 @@ import { LoginPost } from "./login";
 export class LoginComponent implements OnInit{
     // Set our default values
     public localState = { value: '' };
+    model: any = {};
+    loading = false;
     
     constructor(
         public loginService: LoginService,
     ) { }
-
 
     posts: LoginPost[];
     errorMessage: string;

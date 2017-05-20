@@ -24,8 +24,9 @@ import { ROUTES } from './app.routes';
 import { AppComponent } from './app.component';
 import { APP_RESOLVER_PROVIDERS } from './app.resolver';
 import { AppState, InternalStateType } from './app.service';
-import { HomeComponent } from './home';
+import { IndexComponent } from './home';
 import { AboutComponent } from './about';
+import { CompanyDetailComponent } from './about/compliments';
 import { LoginComponent } from './login';
 import { RegisterComponent } from './register';
 import { FunComponent } from './fun';
@@ -55,7 +56,8 @@ type StoreType = {
   declarations: [
     AppComponent,
     AboutComponent,
-    HomeComponent,
+    CompanyDetailComponent,
+    IndexComponent,
     LoginComponent,
     RegisterComponent,
     FunComponent,

@@ -17,7 +17,7 @@
                   <h5 class="blue-text">Say something</h5>
                     <form method="POST" accept-charset="utf-8">
                       <input type="text" name="homeFeedPost" placeholder="what's up?">
-                      <button class="btn btn-flat white blue-text" name="sendemail">Post</button>                    
+                      <button class="btn btn-flat white blue-text" name="sendemail" id="btnHomePost">Post</button>                    
                     </form>                  
                 </div>
                 <div id="test5">
@@ -74,22 +74,22 @@
   <div class="col s12 m5"> 
       <div id="home-feeds">
           {{ range $value := .PostsLists}}
-          <li class="card hoverable z-depth-3">
+          <div class="card hoverable z-depth-3" id="homePost">
               
-              <p><h6>Name of author </h6><h6>Date here</h6></p>
+              <p><h6>{{ $value.Author }} </h6><h6>{{ $value.DatePosted }}</h6></p>
             
-              <h4 class="blue-text">{{ $value }}</h4>
+              <h4 class="blue-text">{{ $value.Topic }}</h4>
               
-              <p><h6>Here is some text for the summary of the post...</h6></p>
+              <p><h6>{{ $value.Content }}</h6></p>
               <p><a href="#">More</a></p>
               <br>
-              <a class="btn gray lighten-4 text-blue">Like</a>
-              <a class="btn gray lighten-4 text-teal">Upvote</a>
-              <a class="btn gray lighten-4 text-red">Downvote</a>
+              <a class="btn gray lighten-4 text-blue">{{ $value.Likes }}</a>
+              <a class="btn gray lighten-4 text-teal">{{ $value.Upvotes }}</a>
+              <a class="btn gray lighten-4 text-red">{{ $value.Downvotes }}</a>
               <a class="h5 text-teal">Comment</a>
               <a class="h5 text-blue">Share</a>
                 
-          </li>
+          </div>
           {{ end }}
       </div>
   </div>

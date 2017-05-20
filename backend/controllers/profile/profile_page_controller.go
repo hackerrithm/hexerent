@@ -31,5 +31,7 @@ func ProfilePage(w http.ResponseWriter, r *http.Request) {
 		sesString2,
 	}
 
+	fmt.Println(passedSession)
+
 	config.Tpl.ExecuteTemplate(w, "profile.html", passedSession)
 }

@@ -1,7 +1,6 @@
 package todo
 
 import (
-	"fmt"
 	"hexerent/backend/config"
 	"hexerent/backend/microservices/api/todo"
 	"hexerent/backend/session"
@@ -11,8 +10,9 @@ import (
 
 // SessionCart group some session
 type SessionCart struct {
-	Sess1 //sessionVar1 string
-	Todo  //[]models.PublicHomePost
+	Sess1
+	Todo
+	TodoCounter uint64
 }
 
 // Todo to be used as interface
@@ -24,48 +24,65 @@ type Sess1 interface{}
 // IndexTodoPage renders the apps-page.html file
 func IndexTodoPage(w http.ResponseWriter, r *http.Request) {
 
-	listOfTodos := todo.Index(w, r)
+	if r.Method == http.MethodGet || r.Method == "GET" {
+		listOfTodos := todo.Index(w, r)
+		numberOfTodos := todo.CountTodos(w, r)
 
-	// Get a session. We're ignoring the error resulted from decoding an
-	// existing session: Get() always returns a session, even if empty.
+		sesString, _ := session.GlobalSession.Values["user"]
 
-	//sesString, _ := login.TestSession.Values["user"]
-	sesString, _ := session.GlobalSession.Values["user"]
-	//sesString2, _ := session.GlobalSession.Values["firstTimeUser"]
-	fmt.Println(sesString, " : THIS IS sesString")
-	//fmt.Println(sesString2, " : THIS IS sesString2")
-	fmt.Println(listOfTodos, " : THIS IS list of todos")
+		passedSession := SessionCart{
+			sesString,
+			listOfTodos,
+			numberOfTodos,
+		}
+		config.Tpl.ExecuteTemplate(w, "todo-app.html", passedSession)
+	} else if r.Method == http.MethodPost {
 
-	passedSession := SessionCart{
-		sesString,
-		//sesString2,
-		listOfTodos,
+		todo.Create(w, r)
+
+		listOfTodos := todo.Index(w, r)
+
+		sesString, _ := session.GlobalSession.Values["user"]
+
+		passedSession := SessionCart{
+			sesString,
+			listOfTodos,
+			1,
+		}
+		config.Tpl.ExecuteTemplate(w, "todo-app.html", passedSession)
 	}
-
-	config.Tpl.ExecuteTemplate(w, "todo-app.html", passedSession)
 }
 
-// CreateTodoPage renders the apps-page.html file
-func CreateTodoPage(w http.ResponseWriter, r *http.Request) {
+// UpdateTodoPage updates Todo list
+func UpdateTodoPage(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodGet || r.Method == "GET" {
 
 		sesString, _ := session.GlobalSession.Values["user"]
 
-		config.Tpl.ExecuteTemplate(w, "todo-app-create.html", sesString)
+		todo := todo.Show(w, r)
 
-	} else {
-		todo.Create(w, r)
+		passedSession := SessionCart{
+			sesString,
+			todo,
+			1,
+		}
 
-		// Get a session. We're ignoring the error resulted from decoding an
-		// existing session: Get() always returns a session, even if empty.
+		config.Tpl.ExecuteTemplate(w, "todo-app-update.html", passedSession)
 
-		//sesString, _ := login.TestSession.Values["user"]
-		sesString, _ := session.GlobalSession.Values["user"]
-		//sesString2, _ := session.GlobalSession.Values["firstTimeUser"]
-		fmt.Println(sesString, " : THIS IS sesString")
+	} else if r.Method == http.MethodPost || r.Method == "POST" {
+		todo.Update(w, r)
+		http.Redirect(w, r, "/user/profile/apps/todo", http.StatusSeeOther)
+	}
 
-		config.Tpl.ExecuteTemplate(w, "todo-app-create.html", sesString)
+}
+
+// DeleteTodoPage deletes a Todo
+func DeleteTodoPage(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method == http.MethodGet || r.Method == "GET" {
+		todo.Delete(w, r)
+		http.Redirect(w, r, "/user/profile/apps/todo", http.StatusSeeOther)
 	}
 
 }

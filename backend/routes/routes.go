@@ -62,11 +62,13 @@ func NewRouter() *mux.Router {
 		Route{"Logout", "GET", "/user/logout", login.Logout},
 		Route{"AppsPage", "GET", "/user/profile/apps/all", apps.AppsPage},
 		Route{"ToDoApp", "GET", "/user/profile/apps/todo", todo.IndexTodoPage},
+		Route{"ToDoApp", "POST", "/user/profile/apps/todo", todo.IndexTodoPage},
 		//Route{"ToDoApp", "GET", "/user/profile/apps/todo/{todoId}", todo.Show},
-		Route{"ToDoApp", "GET", "/user/profile/apps/todo/create", todo.CreateTodoPage},
-		Route{"ToDoApp", "POST", "/user/profile/apps/todo/create", todo.CreateTodoPage},
-		//Route{"ToDoApp", "GET", "/user/profile/apps/todo/update/{todoId}", todo.Update},
-		//Route{"ToDoApp", "GET", "/user/profile/apps/todo/delete/{todoId}", todo.Delete},
+		//Route{"ToDoApp", "GET", "/user/profile/apps/todo/create", todo.CreateTodoPage},
+		//Route{"ToDoApp", "POST", "/user/profile/apps/todo/create", todo.CreateTodoPage},
+		Route{"ToDoApp", "GET", "/user/profile/apps/todo/update/{todoId}", todo.UpdateTodoPage},
+		Route{"ToDoApp", "POST", "/user/profile/apps/todo/update/{todoId}", todo.UpdateTodoPage},
+		Route{"ToDoApp", "GET", "/user/profile/apps/todo/delete/{todoId}", todo.DeleteTodoPage},
 		Route{"ChatApp", "GET", "/user/chat", chat.ServeHome},
 		Route{"ChatApp", "GET", "/user/chat/ws", func(w http.ResponseWriter, r *http.Request) {
 			chat.ServeWs(hub, w, r)

@@ -15,7 +15,7 @@ import (
 
 // Login logs in a user
 func Login(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("method: ", r.Method) // r.Method used for getting the request method
+
 	if r.Method == http.MethodGet || r.Method == "GET" {
 
 		crutime := time.Now().Unix()
@@ -23,8 +23,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(h, strconv.FormatInt(crutime, 10))
 		token := fmt.Sprintf("%x", h.Sum(nil))
 		fmt.Println(token)
+
 		config.Tpl2.ExecuteTemplate(w, "index.html", nil)
+
 	} else if r.Method == http.MethodPost || r.Method == "POST" {
+
 		r.ParseForm()
 		/*token := r.Form.Get("token")
 		if token != "" {
@@ -39,7 +42,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		userName := r.FormValue("username")
 		password := r.FormValue("password")
 
-		account, foundRecord := models.FindUser(userName, password)
+		iden, account, foundRecord := models.FindStudent(userName, password)
 
 		if foundRecord == true {
 			// Get a session. We're ignoring the error resulted from decoding an
@@ -48,6 +51,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			//TestSession, _ = UniversalSessionStore.Get(r, "user-session")
 			// Set some session values.
 			session.GlobalSession.Values["user"] = account //.UserName
+			session.GlobalSession.Values["userID"] = iden
 			session.GlobalSession.Values["firstTimeUser"] = false
 			session.GlobalSession.Values["isLoggedIn"] = false
 

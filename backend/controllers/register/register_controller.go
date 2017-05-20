@@ -76,13 +76,14 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 		if goAhead == true {
 			// Function call
-			userInserter := models.InsertNewUser(userName, firstName, lastName, password, email)
+			userInserter := models.InsertNewStudent(userName, firstName, lastName, password, email)
 
 			// Get a session. We're ignoring the error resulted from decoding an
 			// existing session: Get() always returns a session, even if empty.
 			session.GlobalSession, _ = session.UniversalSessionStore.Get(r, "user-session")
 			// Set some session values.
 			session.GlobalSession.Values["user"] = userInserter //.UserName
+			session.GlobalSession.Values["userID"] = userInserter.UserID
 			session.GlobalSession.Values["firstTimeUser"] = true
 			// Save it before we write to the response/return from the handler.
 			session.GlobalSession.Save(r, w)

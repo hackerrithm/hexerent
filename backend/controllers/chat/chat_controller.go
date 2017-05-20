@@ -2,7 +2,6 @@ package chat
 
 import (
 	"bytes"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -198,8 +197,6 @@ func ServeHome(w http.ResponseWriter, r *http.Request) {
 
 	sesString, _ := session.GlobalSession.Values["user"]
 	sesString2, _ := session.GlobalSession.Values["firstTimeUser"]
-	fmt.Println(sesString, " : THIS IS sesString")
-	fmt.Println(sesString2, " : THIS IS sesString2")
 
 	passedSession := SessionCart{
 		sesString,

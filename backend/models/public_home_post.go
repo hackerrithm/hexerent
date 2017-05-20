@@ -3,66 +3,82 @@ package models
 import (
 	"fmt"
 	"hexerent/backend/database"
+	"time"
 )
 
 // PublicHomePost exported
 type PublicHomePost struct {
-	PostID  int64
-	Comment string `json:"homeFeedPost"`
+	PostID     uint64
+	Author     uint64
+	Topic      string `json:"topic"`
+	Category   string `json:"category"`
+	Content    string `json:"content"`
+	DatePosted string `json:"datePosted"`
+	Likes      uint64
+	Upvotes    uint64
+	Downvotes  uint64
 }
 
 // NewPublicHomePost : Acts as a constructor
-func NewPublicHomePost(postid int64, comment string) *PublicHomePost {
+func NewPublicHomePost(postid, author uint64, topic, category, content, datePosted string, likes, upvotes, downvotes uint64) *PublicHomePost {
 	publicHomePost := new(PublicHomePost)
-	publicHomePost.Comment = comment
+	publicHomePost.Author = author
+	publicHomePost.Topic = topic
+	publicHomePost.Category = category
+	publicHomePost.Content = content
+	publicHomePost.DatePosted = datePosted
+	publicHomePost.Likes = likes
+	publicHomePost.Upvotes = upvotes
+	publicHomePost.Downvotes = downvotes
 
 	return publicHomePost
 }
 
 // InsertNewHomePost inserts a new user in the sql database
-func InsertNewHomePost(comment string) PublicHomePost {
+func InsertNewHomePost(author uint64, topic, category, content, datePosted string, likes, upvotes, downvotes uint64) PublicHomePost {
+
 	DB, err := database.NewOpen()
 
-	var insertStatement = "INSERT post SET Comment=?"
+	var insertStatement = "INSERT post SET AuthorID=?,Topic=?,Category=?,Content=?,DatePosted=?,Likes=?,Upvotes=?,Downvotes=?"
 	stmt, err := DB.Prepare(insertStatement)
-	//checkErr(err)
 
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	res, err := stmt.Exec(comment)
+	res, err := stmt.Exec(author, topic, category, content, datePosted, likes, upvotes, downvotes)
 
-	//checkErr(err)
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	id, err := res.LastInsertId()
-	//checkErr(err)
+
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	fmt.Println(id)
 
-	homeFeedPost := NewPublicHomePost(id, comment)
+	identoficationNumber := uint64(id)
+
+	homeFeedPost := NewPublicHomePost(identoficationNumber, author, topic, category, content, datePosted, likes, upvotes, downvotes)
 
 	return *homeFeedPost
 
 }
 
 // FindAllHomeFeedPosts stuff
-func FindAllHomeFeedPosts() []string /*[]PublicHomePost.Comment*/ {
-
-	//x := make(map[int][]string)
+func FindAllHomeFeedPosts() []PublicHomePost {
 
 	// empty list of Posts
-	//postLists := []PublicHomePost{}
+	postLists := []PublicHomePost{}
 
-	var postLists = []string{}
+	const shortForm = "2006-Jan-02"
+	enteredTime, _ := time.Parse(shortForm, "2016-May-22")
+	fmt.Println(enteredTime, " : this is the time entered")
 
-	homePost := NewPublicHomePost(0, "")
+	homePost := NewPublicHomePost(1, 1, "", "", "", "", 1, 1, 1)
 
 	DB, err := database.NewOpen()
 
@@ -71,32 +87,48 @@ func FindAllHomeFeedPosts() []string /*[]PublicHomePost.Comment*/ {
 		fmt.Println(err)
 	}
 
-	//i := 0
-
 	for rows.Next() {
-		var postid int64
-		var comment string
+		var postid, authorid, likes, upvotes, downvotes uint64
+		var topic, category, content, datePosted string
 
-		err = rows.Scan(&postid, &comment)
+		err = rows.Scan(&postid, &authorid, &topic, &category, &content, &datePosted, &likes, &upvotes, &downvotes)
 		if err != nil {
 			fmt.Println(err)
 		}
-		fmt.Println(postid, " this is id")
-		fmt.Println(comment, " this is comment")
 
 		homePost.PostID = postid
-		homePost.Comment = comment
+		homePost.Author = authorid
+		homePost.Topic = topic
+		homePost.Category = category
+		homePost.Content = content
+		homePost.DatePosted = datePosted
+		homePost.Likes = likes
+		homePost.Upvotes = upvotes
+		homePost.Downvotes = downvotes
 
-		postLists = append(postLists, homePost.Comment /*PublicHomePost{homePost.PostID, homePost.Comment}*/)
-		//x[i] = append(x[i], homePost.Comment)
-		//postLists = append(postLists, x[i])
+		postLists = append(postLists, PublicHomePost{
+			homePost.PostID,
+			homePost.Author,
+			homePost.Topic,
+			homePost.Category,
+			homePost.Content,
+			homePost.DatePosted,
+			homePost.Likes,
+			homePost.Upvotes,
+			homePost.Downvotes,
+		})
 
-		//i++
+		/*fmt.Println(homePost.PostID, "--")
+		fmt.Println(authorid, "--")
+		fmt.Println(topic, "--")
+		fmt.Println(category, "--")
+		fmt.Println(content, "--")
+		fmt.Println(datePosted, "--")
+		fmt.Println(likes, "--")
+		fmt.Println(upvotes, "--")
+		fmt.Println(downvotes, "--")*/
 
 	}
-	fmt.Println("")
-	fmt.Println("")
-	fmt.Println("this is postLists final: ", postLists)
 
 	DB.Close()
 

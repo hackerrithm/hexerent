@@ -8,95 +8,118 @@ import (
 
 // Todo struct
 type Todo struct {
-	TodoID    int64
-	Name      string    `json:"name"`
-	Completed bool      `json:"completed"`
-	Due       time.Time `json:"due"`
+	TodoID      uint64
+	Title       string    `json:"title"`
+	Name        string    `json:"name"`
+	Category    string    `json:"category"`
+	Status      string    `json:"status"`
+	Completed   bool      `json:"completed"`
+	Due         time.Time `json:"due"`
+	DateCreated time.Time `json:"dateCreated"`
+	UserID      uint64
 }
 
 // NewTodo : Acts as a constructor
-func NewTodo(todoid int64, name string, completed bool, due time.Time) *Todo {
+func NewTodo(todoid uint64, title, name, category, status string, completed bool, due, dateCreated time.Time, userID uint64) *Todo {
 	todo := new(Todo)
 	todo.TodoID = todoid
+	todo.Title = title
 	todo.Name = name
+	todo.Category = category
+	todo.Status = status
 	todo.Completed = completed
 	todo.Due = due
+	todo.DateCreated = dateCreated
+	todo.UserID = userID
 	return todo
 }
 
 // RepoFindTodo do
-func RepoFindTodo(id int64) Todo {
+func RepoFindTodo(id, userID uint64) Todo {
 
 	const shortForm = "2006-Jan-02"
 	enteredTime, _ := time.Parse(shortForm, "2011-01-19")
-	var name string
+	var title, name, category, status string
+	var completed bool
+	dateCreated, _ := time.Parse(shortForm, "2011-01-19")
+	due, _ := time.Parse(shortForm, "2011-01-19")
+
+	todo := NewTodo(id, "", "", "", "", true, enteredTime, enteredTime, userID)
 
 	DB, err := database.NewOpen()
 
-	rows, err := DB.Prepare("SELECT Name FROM todo WHERE ToDoID = ?")
+	rows, err := DB.Prepare("SELECT Title, Name, Category, Status, Completed, Due, DateCreated FROM todo WHERE ToDoID = ?")
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	rows.QueryRow(id).Scan(&name)
+	rows.QueryRow(id).Scan(&title, &name, &category, &status, &completed, &due, &dateCreated, &userID)
 
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	todo := NewTodo(id, name, true, enteredTime)
-
-	fmt.Println(todo.Name)
+	//var todoItem Todo
 	/*
-		for _, t := range todos {
-			if t.Id == id {
-				return t
-			}
+		todo.TodoID = id
+		todo.Title = title
+		todo.Name = name
+		todo.Category = category
+		todo.Status = status
+		todo.Completed = completed
+		todo.Due = due
+		todo.DateCreated = dateCreated
+		todo.UserID = userID
+
+		todoItem := Todo{
+			todo.TodoID,
+			todo.Title,
+			todo.Name,
+			todo.Category,
+			todo.Status,
+			todo.Completed,
+			todo.Due,
+			todo.DateCreated,
+			todo.UserID,
 		}
-		// return empty Todo if not found
-		return Todo{}
 	*/
+
+	todo = NewTodo(id, title, name, category, status, completed, due, dateCreated, userID)
+
+	/*todoItem = Todo{
+		id, title, name, category, status, completed, due, dateCreated, userID,
+	}*/
+
+	fmt.Println("CHECK OUT TODO NAME: ", name, " Please tell me if working")
 
 	DB.Close()
 	return *todo
 }
 
 // RepoFindAllTodos stuff
-func RepoFindAllTodos() []string /*[]Todo*/ {
+func RepoFindAllTodos(userID uint64) []Todo {
 
-	// empty list of Todos
-	//todoLists := []Todo{}
-	todoLists := []string{}
+	todoLists := []Todo{}
 
 	const shortForm = "2006-Jan-02"
 	enteredTime, _ := time.Parse(shortForm, "2011-01-19")
 
-	todo := NewTodo(0, "", true, enteredTime)
+	todo := NewTodo(0, "", "", "", "", true, enteredTime, enteredTime, userID)
 
 	DB, err := database.NewOpen()
 
-	rows, err := DB.Query("SELECT * FROM todo")
+	rows, err := DB.Query("SELECT * FROM todo WHERE UserID=?", userID)
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	for rows.Next() {
-		var todoid int64
-		var name string
-		var due string //time.Time
+		var todoid, userID uint64
+		var title, name, category, status, due, dateCreated string
 		var completed bool
-
 		var tinyInt string
 
-		//const shortForm = "2006-Jan-02"
-		//enteredTime, _ := time.Parse(shortForm, "2011-01-19")
-		//fmt.Println(enteredTime, " : this is the time entered")
-
-		//xt := reflect.TypeOf(enteredTime).Kind()
-
-		//fmt.Println("time is of type name: ", xt)
-
-		err = rows.Scan(&todoid, &name, &tinyInt, &due)
+		err = rows.Scan(&todoid, &title, &name, &category, &status, &tinyInt, &due, &dateCreated, &userID)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -109,14 +132,25 @@ func RepoFindAllTodos() []string /*[]Todo*/ {
 		enteredTime2, _ := time.Parse(shortForm, due)
 
 		todo.TodoID = todoid
+		todo.Title = title
 		todo.Name = name
+		todo.Category = category
+		todo.Status = status
 		todo.Completed = completed
 		todo.Due = enteredTime2
+		todo.DateCreated = enteredTime2
+		todo.UserID = userID
 
-		todoLists = append(todoLists, todo.Name) /*Todo{todo.TodoID,
-		todo.Name,
-		todo.Completed,
-		todo.Due}*/
+		todoLists = append(todoLists, Todo{todo.TodoID,
+			todo.Title,
+			todo.Name,
+			todo.Category,
+			todo.Status,
+			todo.Completed,
+			todo.Due,
+			todo.DateCreated,
+			todo.UserID,
+		})
 	}
 
 	DB.Close()
@@ -124,54 +158,73 @@ func RepoFindAllTodos() []string /*[]Todo*/ {
 	return todoLists
 }
 
+// RepoFindAllTodosPerUser returns the number of todos for a single user
+func RepoFindAllTodosPerUser(userID uint64) uint64 {
+	var result uint64
+	DB, err := database.NewOpen()
+
+	countedTodosResult, err := DB.Query("SELECT * FROM todo WHERE UserID=?", userID)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	for countedTodosResult.Next() {
+		result = result + 1
+	}
+
+	DB.Close()
+
+	fmt.Println("Number of todos for u:", result)
+
+	return result
+}
+
 // RepoCreateTodo stuff
-func RepoCreateTodo(td *Todo) Todo {
+func RepoCreateTodo(td *Todo, userID uint64) Todo {
 
 	DB, err := database.NewOpen()
 
-	var insertStatement = "INSERT todo SET Name=?,Completed=?,Due=?"
+	var insertStatement = "INSERT todo SET Title=?,Name=?,Category=?,Status=?,Completed=?,Due=?,DateCreated=?,UserID=?"
 	stmt, err := DB.Prepare(insertStatement)
-	//checkErr(err)
 
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	res, err := stmt.Exec(td.Name, td.Completed, td.Due)
+	res, err := stmt.Exec(td.Title, td.Name, td.Category, td.Status, td.Completed, td.Due, td.DateCreated, td.UserID)
 
-	//checkErr(err)
 	if err != nil {
 		fmt.Println(err)
 	}
 
 	id, err := res.LastInsertId()
-	//checkErr(err)
+
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	td.TodoID = id
+	// converst int64 to uint64 (unsigned)
+	td.TodoID = uint64(id)
 
 	DB.Close()
 
 	return *td
 }
 
-func RepoUpdateTodo(id int64, td *Todo) Todo {
+// RepoUpdateTodo updates Todo list
+func RepoUpdateTodo(id, userID uint64, td *Todo) Todo {
 
 	DB, err := database.NewOpen()
 
-	var updateStatement = "UPDATE todo SET Name=?,Completed=?,Due=? WHERE ToDoID = ?"
+	var updateStatement = "UPDATE todo SET Title=?,Name=?,Category=?,Status=?,Completed=?,Due=?,DateCreated=? WHERE ToDoID = ? AND userID=?"
 	stmt, err := DB.Prepare(updateStatement)
-	//checkErr(err)
 
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	_, err = stmt.Exec(td.Name, td.Completed, td.Due, id)
+	_, err = stmt.Exec(td.Title, td.Name, td.Category, td.Status, td.Completed, td.Due, td.DateCreated, id, userID)
 
-	//checkErr(err)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -184,7 +237,7 @@ func RepoUpdateTodo(id int64, td *Todo) Todo {
 }
 
 // RepoDestroyTodo do stuff
-func RepoDestroyTodo(id int64) {
+func RepoDestroyTodo(id uint64) {
 
 	DB, err := database.NewOpen()
 

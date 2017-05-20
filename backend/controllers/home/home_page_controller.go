@@ -1,11 +1,13 @@
 package home
 
 import (
+	"bytes"
 	"fmt"
 	"hexerent/backend/config"
 	"hexerent/backend/models"
 	"hexerent/backend/session"
 	"net/http"
+	"time"
 )
 
 // SessionCart group some session
@@ -24,53 +26,78 @@ type Sess1 interface{}
 // Sess2 to be used as interface
 type Sess2 interface{}
 
+// GetUserInformation stores user data
+func GetUserInformation() uint64 {
+	sesString, _ := session.GlobalSession.Values["userID"]
+	naswer := sesString.(uint64)
+	return naswer
+}
+
 // HomePage renders the home.html file
 func HomePage(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodGet || r.Method == "GET" {
 
 		var postsLists = models.FindAllHomeFeedPosts()
+		var v models.PublicHomePost
+		var listHomePostFeed []models.PublicHomePost
+		var newList []models.PublicHomePost
 
-		var v string //models.PublicHomePost
-
-		//var listHomePostFeed []models.PublicHomePost
-
-		var listHomePostFeed = []string{}
+		var postCounter int64
 
 		for _, v = range postsLists {
 
 			listHomePostFeed = append(listHomePostFeed, v)
-
+			postCounter++
+			fmt.Println("postCounter is: ", postCounter)
 		}
 
-		// Get a session. We're ignoring the error resulted from decoding an
-		// existing session: Get() always returns a session, even if empty.
+		postCounter = (postCounter - 1)
 
-		//sesString, _ := login.TestSession.Values["user"]
+		var k int64
+		k = 0
+
+		for i := postCounter; i > -1; i-- {
+			newList = append(newList, listHomePostFeed[i])
+			k++
+		}
+
 		sesString, _ := session.GlobalSession.Values["user"]
 		sesString2, _ := session.GlobalSession.Values["firstTimeUser"]
-		fmt.Println(sesString, " : THIS IS sesString")
-		fmt.Println(sesString2, " : THIS IS sesString2")
-		fmt.Println(listHomePostFeed, " : THIS IS sesString2")
 
 		passedSession := SessionCart{
 			sesString,
 			sesString2,
-			listHomePostFeed,
+			newList,
 		}
 
 		config.Tpl.ExecuteTemplate(w, "home.html", passedSession)
 	} else if r.Method == http.MethodPost || r.Method == "POST" {
 
-		comment := r.FormValue("homeFeedPost")
+		author := GetUserInformation()
+		topic := "Random"           //r.FormValue("homeFeedPost")
+		category := "Entertainment" //r.FormValue("homeFeedPost")
+		content := r.FormValue("homeFeedPost")
+		datePosted := time.Now()  //r.FormValue("homeFeedPost")
+		var likes uint64 = 134    //r.FormValue("homeFeedPost")
+		var upvotes uint64 = 134  //r.FormValue("homeFeedPost")
+		var downvotes uint64 = 12 //r.FormValue("homeFeedPost")
 
-		// Function call
-		postInserter := models.InsertNewHomePost(comment)
+		createdTime := FormatDateTime(datePosted)
 
+		postInserter := models.InsertNewHomePost(author, topic, category, content, createdTime, likes, upvotes, downvotes)
 		fmt.Println(postInserter)
 
 		//Redirects to home page
 		http.Redirect(w, r, "/user/home", http.StatusSeeOther)
 
 	}
+}
+
+// FormatDateTime used to format date and time
+func FormatDateTime(t time.Time) string {
+	var buffer bytes.Buffer
+	buffer.WriteString(t.Month().String()[:3])
+	buffer.WriteString(fmt.Sprintf(" %2d '%2d at %2d:%2d", t.Day(), t.Year()%100, t.Hour(), t.Minute()))
+	return buffer.String()
 }

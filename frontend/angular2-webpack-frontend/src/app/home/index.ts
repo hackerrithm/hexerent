@@ -1,1 +1,1 @@
-export * from './home.component';
+export * from './index.component';

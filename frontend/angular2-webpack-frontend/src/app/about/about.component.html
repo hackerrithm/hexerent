@@ -2,4 +2,17 @@
   <div class="row">
     <h4>Hey</h4>
   </div>
+  <div class="row">
+    <div class="col m12">
+        <h4>Companies</h4>
+        <ul class="companies" id="companies-menu">
+          <li *ngFor="let company of companies"
+            [class.selected]="company === selectedCompany"
+            (click)="onSelect(company)" class="card hoverable">
+            <span class="card-content blue-text">{{company.name}}</span>
+          </li>
+        </ul>
+        <company-detail [company]="selectedCompany"></company-detail>
+    </div>
+  </div>
 </div>

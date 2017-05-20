@@ -3,9 +3,8 @@ package todo
 import (
 	"encoding/json"
 	"fmt"
+	"hexerent/backend/controllers/home"
 	"hexerent/backend/models"
-	"io"
-	"io/ioutil"
 	"net/http"
 	"strconv"
 
@@ -28,7 +27,6 @@ func jsonResponse(res http.ResponseWriter, data interface{}) string {
 	payload, err := json.Marshal(data)
 	if errorCheck(res, err) {
 		fmt.Println(err)
-		//return
 	}
 
 	//fmt.Fprintf(res, string(payload))
@@ -36,31 +34,99 @@ func jsonResponse(res http.ResponseWriter, data interface{}) string {
 }
 
 // Index renders the home.html file
-func Index(w http.ResponseWriter, r *http.Request) []string { //[]models.Todo {
+func Index(w http.ResponseWriter, r *http.Request) []models.Todo {
 
-	var todoLists = models.RepoFindAllTodos()
+	userID := home.GetUserInformation()
 
-	var v string // models.Todo
-
-	var listTodos []string //[]models.Todo
+	var todoLists = models.RepoFindAllTodos(userID)
+	var v models.Todo
+	var listTodos []models.Todo
 
 	for _, v = range todoLists {
-
 		listTodos = append(listTodos, v)
-
 	}
-
-	//listOfTodos := jsonResponse(w, listTodos)
-	return listTodos //listOfTodos
-
+	return listTodos
 }
 
 // Create stuff
 func Create(w http.ResponseWriter, r *http.Request) {
 
+	title := r.FormValue("title")
 	name := r.FormValue("name")
+	category := "general" //r.FormValue("category")
+	status := "active"    //r.FormValue("status")
+	completed := ""       //r.FormValue("completed")
+	dueDate := r.FormValue("due")
+	dateCreated := time.Now().Local()
+	userID := home.GetUserInformation()
+
+	fmt.Println("********* ************** this is userID: ", userID)
+
+	var a = completed
+	var completedTask bool
+	isCompletedTicked := true
+	if len(a) == 0 {
+		fmt.Println(!isCompletedTicked)
+		completedTask = !isCompletedTicked
+	} else {
+		completedTask = isCompletedTicked
+	}
+
+	const shortForm = "2006-01-02"
+	enteredTime, _ := time.Parse(shortForm, dueDate)
+	fmt.Println(enteredTime, " : this is the time entered")
+	createdTime, _ := time.Parse(shortForm, dateCreated.Format("2006-01-02"))
+
+	todo := models.NewTodo(0, title, name, category, status, completedTask, enteredTime, createdTime, userID)
+
+	models.RepoCreateTodo(todo, userID)
+}
+
+// Show does stuff
+func Show(w http.ResponseWriter, r *http.Request) models.Todo {
+
+	var newID uint64
+
+	vars := mux.Vars(r)
+	todoID := vars["todoId"]
+	fmt.Println("Todo show:", todoID)
+
+	newID, _ = strconv.ParseUint(todoID, 10, 0)
+	userID := home.GetUserInformation()
+
+	todo := models.RepoFindTodo(newID, userID)
+
+	//fmt.Println(todo.Title)
+
+	return todo
+
+}
+
+// CountTodos returns the reults after counting the number of
+// Todos per user
+func CountTodos(w http.ResponseWriter, r *http.Request) uint64 {
+	userID := home.GetUserInformation()
+	return models.RepoFindAllTodosPerUser(userID)
+}
+
+// Update does stuff
+func Update(w http.ResponseWriter, r *http.Request) {
+	var newID uint64
+
+	vars := mux.Vars(r)
+	todoID := vars["todoId"]
+	fmt.Println("Todo show:", todoID)
+
+	newID, _ = strconv.ParseUint(todoID, 10, 0)
+
+	title := r.FormValue("title")
+	name := r.FormValue("name")
+	category := "general" //r.FormValue("category")
+	status := "active"    //r.FormValue("status")
 	completed := r.FormValue("completed")
 	dueDate := r.FormValue("due")
+	dateCreated := time.Now().Local()
+	userID := home.GetUserInformation()
 
 	var a = completed
 	var completedTask bool
@@ -75,131 +141,24 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	const shortForm = "2006-Jan-02"
 	enteredTime, _ := time.Parse(shortForm, dueDate)
 	fmt.Println(enteredTime, " : this is the time entered")
+	createdTime, _ := time.Parse(shortForm, dateCreated.Format("2006-01-02"))
 
-	todo := models.NewTodo(0, name, completedTask, enteredTime)
+	todo := models.NewTodo(newID, title, name, category, status, completedTask, enteredTime, createdTime, userID)
 
-	/*body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
-	if err != nil {
-		panic(err)
-	}
-	if err := r.Body.Close(); err != nil {
-		panic(err)
-	}
-	if err := json.Unmarshal(body, &todo); err != nil {
-		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-		w.WriteHeader(422) // unprocessable entity
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
-		}
-	}*/
-
-	models.RepoCreateTodo(todo)
-
-}
-
-// Show does stuff
-func Show(w http.ResponseWriter, r *http.Request) {
-
-	if r.Method == http.MethodGet || r.Method == "GET" {
-
-		var newID int64
-
-		vars := mux.Vars(r)
-		todoID := vars["todoId"]
-		fmt.Println("Todo show:", todoID)
-
-		newID, _ = strconv.ParseInt(todoID, 10, 0)
-
-		todoData := models.RepoFindTodo(newID)
-
-		jsonResponse(w, todoData) /*
-
-			b, err := json.Marshal(todoData.Name)
-			if err != nil {
-				fmt.Println(err)
-			}
-
-			fmt.Println(string(b))
-
-			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-			w.WriteHeader(http.StatusOK)
-			w.Write([]byte(string(b)))
-		*/
-
-	}
-
-}
-
-// Update does stuff
-func Update(w http.ResponseWriter, r *http.Request) {
-
-	if r.Method == http.MethodGet || r.Method == "GET" {
-		var newID int64
-
-		vars := mux.Vars(r)
-		todoID := vars["todoId"]
-		fmt.Println("Todo show:", todoID)
-
-		newID, _ = strconv.ParseInt(todoID, 10, 0)
-
-		name := "Updated Kemar"  //r.FormValue("name")
-		completed := ""          //r.FormValue("completed")
-		dueDate := "2020-Jan-02" //r.FormValue("due")
-
-		var a = completed
-		var completedTask bool
-		isCompletedTicked := true
-		if len(a) == 0 {
-			fmt.Println(!isCompletedTicked)
-			completedTask = !isCompletedTicked
-		} else {
-			completedTask = isCompletedTicked
-		}
-
-		const shortForm = "2006-Jan-02"
-		enteredTime, _ := time.Parse(shortForm, dueDate)
-		fmt.Println(enteredTime, " : this is the time entered")
-
-		todo := models.NewTodo(newID, name, completedTask, enteredTime)
-
-		body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
-		if err != nil {
-			panic(err)
-		}
-		if err := r.Body.Close(); err != nil {
-			panic(err)
-		}
-		if err := json.Unmarshal(body, &todo); err != nil {
-			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-			w.WriteHeader(422) // unprocessable entity
-			if err := json.NewEncoder(w).Encode(err); err != nil {
-				panic(err)
-			}
-		}
-
-		t := models.RepoUpdateTodo(newID, todo)
-
-		jsonResponse(w, t)
-	}
+	models.RepoUpdateTodo(newID, userID, todo)
 
 }
 
 // Delete does stuff
 func Delete(w http.ResponseWriter, r *http.Request) {
 
-	if r.Method == http.MethodGet || r.Method == "GET" {
+	var newID uint64
 
-		var newID int64
+	vars := mux.Vars(r)
+	todoID := vars["todoId"]
+	fmt.Println("Todo show:", todoID)
 
-		vars := mux.Vars(r)
-		todoID := vars["todoId"]
-		fmt.Println("Todo show:", todoID)
+	newID, _ = strconv.ParseUint(todoID, 10, 0)
 
-		newID, _ = strconv.ParseInt(todoID, 10, 0)
-
-		models.RepoDestroyTodo(newID)
-
-		jsonResponse(w, newID)
-
-	}
+	models.RepoDestroyTodo(newID)
 }

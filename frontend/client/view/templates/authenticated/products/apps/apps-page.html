@@ -1,35 +1,47 @@
+{{define "title"}}{{.UserName}} Profile{{end}}
 {{template "authenticatedheader"}}
 {{template "authenticatednavbar"}}
 
-<section>
   <div class="container">
-    <div class="row">
+    <div class="row center">
       <div class="col m3">
-        <div class="card-panel teal">
-          <h3 class="white-text"><a href="/user/profile/apps/todo">Todo App</a> 
+        <div class="card-panel white">
+          <div class="card-content">
+            <img src="/public/images/pic.jpg" width="200" height="200" alt="wolf">
+          </div>
+          <h3><a href="/user/profile/apps/todo" class="blue-text darken-1">Notes</a> 
           </h3>
         </div>
       </div>
       <div class="col m3">
-        <div class="card-panel teal">
-          <h3 class="white-text">App 2
+        <div class="card-panel white">
+          <div class="card-content">
+            <img src="/public/images/pic.jpg" width="200" height="200" alt="wolf">
+          </div>
+          <h3><a href="/user/profile/apps/todo" class="yellow-text darken-1">Calendar</a> 
           </h3>
         </div>
       </div>
-      <div class="col m3">
-        <div class="card-panel teal">
-          <h3 class="white-text">App 3
+      <div class="col m3">       
+        <div class="card-panel white">
+          <div class="card-content">
+              <img src="/public/images/pic.jpg" width="200" height="200" alt="wolf">
+          </div> 
+          <h3><a href="/user/profile/apps/todo" class="red-text darken-1">Calculator</a> 
           </h3>
         </div>
       </div>
-      <div class="col m3">
-        <div class="card-panel teal">
-          <h3 class="white-text">App 4
+      <div class="col m3">      
+        <div class="card-panel white">
+          <div class="card-content">
+            <img src="/public/images/pic.jpg" width="200" height="200" alt="wolf">
+          </div>           
+          <h3><a href="/user/profile/apps/todo" class="green-text darken-1">Mist</a> 
           </h3>
         </div>
       </div>
     </div>
   </div>
-</section>
+
 
 {{template "authenticatedfooter"}}
