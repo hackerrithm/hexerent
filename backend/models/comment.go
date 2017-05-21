@@ -25,11 +25,11 @@ func NewComment(commentid, userid, postid uint64, commenttext string) *Comment {
 }
 
 // InsertNewComment inserts a new comment for post  in the database
-func InsertNewComment(commentid, userid, postid uint64, commenttext string) Comment {
+func InsertNewComment(comment *Comment, userid, postid uint64, commenttext string) Comment {
 
 	DB, err := database.NewOpen()
 
-	var insertStatement = "INSERT commnet SET CommentID=?,UserID=?,PostID=?,CommentText=?"
+	var insertStatement = "INSERT comment SET UserID=?,PostID=?,CommentText=?"
 	stmt, err := DB.Prepare(insertStatement)
 
 	if err != nil {
@@ -50,9 +50,27 @@ func InsertNewComment(commentid, userid, postid uint64, commenttext string) Comm
 
 	fmt.Println(id)
 
-	identoficationNumber := uint64(id)
+	comment.CommentID = uint64(id)
 
-	comment := NewComment(identoficationNumber, userid, postid, commenttext)
+	DB.Close()
+
+	//Updates done here
+	DB, err = database.NewOpen()
+
+	var updateStatement = "UPDATE post SET Comments= Comments + 1 WHERE postID=?"
+	stmt, err = DB.Prepare(updateStatement)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	_, err = stmt.Exec(comment.PostID)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	DB.Close()
 
 	return *comment
 

@@ -14,6 +14,7 @@ import (
 	"hexerent/backend/controllers/profile"
 	"hexerent/backend/controllers/register"
 	"hexerent/backend/microservices"
+	"hexerent/backend/microservices/api/comment"
 	"hexerent/backend/microservices/api/downvote"
 	"hexerent/backend/microservices/api/like"
 	"hexerent/backend/microservices/api/upvote"
@@ -69,6 +70,7 @@ func NewRouter() *mux.Router {
 		Route{"Upvotes", "POST", "/user/home/homepost/upvoted/{postID}", upvote.Create},
 		Route{"Downvotes", "GET", "/user/home/homepost/downvoted", downvote.Create},
 		Route{"Downvotes", "POST", "/user/home/homepost/downvoted/{postID}", downvote.Create},
+		Route{"Comment", "POST", "/user/home/homepost/commented/{postID}", comment.Create},
 		Route{"AppsPage", "GET", "/user/profile/apps/all", apps.AppsPage},
 		Route{"ToDoApp", "GET", "/user/profile/apps/todo", todo.IndexTodoPage},
 		Route{"ToDoApp", "POST", "/user/profile/apps/todo", todo.IndexTodoPage},

@@ -80,9 +80,9 @@
           {{ range $value := $listOfPosts}}
           <div class="card hoverable z-depth-3" id="homePost">
             <div>
-              <h5>{{ $value.Author }}</h5><h6>{{ $value.DatePosted }}</h6>
+              <h6 class="gray-text lighten-3"> Posted {{ $value.DatePosted }}</h6><h5> by {{ $value.Author }}</h5>
             
-              <h4 class="blue-text">{{ $value.Topic }}</h4>
+              <h5 class="blue-text">{{ $value.Topic }}</h5>
               
               <p><h5>{{ $value.Content }}</h5></p>
               <p><a href="#">More</a></p>
