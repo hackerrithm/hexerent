@@ -12,9 +12,11 @@ import (
 
 // SessionCart group some session
 type SessionCart struct {
-	Sess1      //sessionVar1 string
-	Sess2      //sessionVar2 bool
-	PostsLists //[]models.PublicHomePost
+	Sess1
+	Sess2
+	PostsLists
+	PostInformationLikes
+	CommentLists
 }
 
 // PostsLists to be used as interface
@@ -25,6 +27,12 @@ type Sess1 interface{}
 
 // Sess2 to be used as interface
 type Sess2 interface{}
+
+// PostInformationLikes to be used as interface
+type PostInformationLikes interface{}
+
+// CommentLists to be used as interface
+type CommentLists interface{}
 
 // GetUserInformation stores user data
 func GetUserInformation() uint64 {
@@ -39,11 +47,18 @@ func HomePage(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet || r.Method == "GET" {
 
 		var postsLists = models.FindAllHomeFeedPosts()
-		var v models.PublicHomePost
-		var listHomePostFeed []models.PublicHomePost
-		var newList []models.PublicHomePost
+		var commentLists = models.FindAllComments()
 
-		var postCounter int64
+		var v models.PublicHomePost
+		var q models.Comment
+
+		var listHomePostFeed []models.PublicHomePost
+		var listComment []models.Comment
+
+		var newList []models.PublicHomePost
+		var newCommentList []models.Comment
+
+		var postCounter, commentCounter int64
 
 		for _, v = range postsLists {
 
@@ -52,15 +67,49 @@ func HomePage(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("postCounter is: ", postCounter)
 		}
 
+		for _, q = range commentLists {
+
+			listComment = append(listComment, q)
+			commentCounter++
+			fmt.Println("commentCounter is: ", commentCounter)
+		}
+
 		postCounter = (postCounter - 1)
+		commentCounter = (commentCounter - 1)
 
 		var k int64
 		k = 0
-
+		var totalLikesPerPost, totalUpvotesPerPost, totalDownvotesPerPost, totalCommentsPerPost uint64
 		for i := postCounter; i > -1; i-- {
 			newList = append(newList, listHomePostFeed[i])
+			totalLikesPerPost = listHomePostFeed[i].Likes
+			totalUpvotesPerPost = listHomePostFeed[i].Upvotes
+			totalDownvotesPerPost = listHomePostFeed[i].Downvotes
+			totalCommentsPerPost = listHomePostFeed[i].Comments
+
+			fmt.Println("Number of likes: ", totalLikesPerPost,
+				"Number of upvotes: ", totalUpvotesPerPost,
+				"Number of downvotes: ", totalDownvotesPerPost,
+				"Number of comments: ", totalCommentsPerPost)
 			k++
 		}
+
+		//var userComment []string
+		//userComment := make([]string, 0)
+		for i := commentCounter; i > -1; i-- {
+			newCommentList = append(newCommentList, listComment[i])
+			fmt.Println("This is the comment: ", listComment[i].CommentText)
+			//userComment[i] = listComment[i].CommentText
+			k++
+		}
+
+		/*var index uint64
+		var toatalLikesPerPost uint64
+		for index = 0; index < uint64(len(newList)); index++ {
+			listHomePostFeed[index] = models.FindHomeFeedPost(index + 1)
+			toatalLikesPerPost = listHomePostFeed[index].Likes
+			fmt.Println("Number of likes: ", toatalLikesPerPost)
+		}*/
 
 		sesString, _ := session.GlobalSession.Values["user"]
 		sesString2, _ := session.GlobalSession.Values["firstTimeUser"]
@@ -69,6 +118,8 @@ func HomePage(w http.ResponseWriter, r *http.Request) {
 			sesString,
 			sesString2,
 			newList,
+			totalLikesPerPost,
+			newCommentList,
 		}
 
 		config.Tpl.ExecuteTemplate(w, "home.html", passedSession)
@@ -78,14 +129,15 @@ func HomePage(w http.ResponseWriter, r *http.Request) {
 		topic := "Random"           //r.FormValue("homeFeedPost")
 		category := "Entertainment" //r.FormValue("homeFeedPost")
 		content := r.FormValue("homeFeedPost")
-		datePosted := time.Now()  //r.FormValue("homeFeedPost")
-		var likes uint64 = 134    //r.FormValue("homeFeedPost")
-		var upvotes uint64 = 134  //r.FormValue("homeFeedPost")
-		var downvotes uint64 = 12 //r.FormValue("homeFeedPost")
+		datePosted := time.Now()
+		var likes uint64
+		var upvotes uint64
+		var downvotes uint64
+		var comments uint64
 
 		createdTime := FormatDateTime(datePosted)
 
-		postInserter := models.InsertNewHomePost(author, topic, category, content, createdTime, likes, upvotes, downvotes)
+		postInserter := models.InsertNewHomePost(author, topic, category, content, createdTime, likes, upvotes, downvotes, comments)
 		fmt.Println(postInserter)
 
 		//Redirects to home page

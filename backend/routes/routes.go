@@ -14,6 +14,9 @@ import (
 	"hexerent/backend/controllers/profile"
 	"hexerent/backend/controllers/register"
 	"hexerent/backend/microservices"
+	"hexerent/backend/microservices/api/downvote"
+	"hexerent/backend/microservices/api/like"
+	"hexerent/backend/microservices/api/upvote"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -60,12 +63,16 @@ func NewRouter() *mux.Router {
 		Route{"Home", "POST", "/user/home", home.HomePage},
 		Route{"Profile", "GET", "/user/profile", profile.ProfilePage},
 		Route{"Logout", "GET", "/user/logout", login.Logout},
+		Route{"Likes", "GET", "/user/home/homepost/liked", like.Create},
+		Route{"Likes", "POST", "/user/home/homepost/liked/{postID}", like.Create},
+		Route{"Upvotes", "GET", "/user/home/homepost/upvoted", upvote.Create},
+		Route{"Upvotes", "POST", "/user/home/homepost/upvoted/{postID}", upvote.Create},
+		Route{"Downvotes", "GET", "/user/home/homepost/downvoted", downvote.Create},
+		Route{"Downvotes", "POST", "/user/home/homepost/downvoted/{postID}", downvote.Create},
 		Route{"AppsPage", "GET", "/user/profile/apps/all", apps.AppsPage},
 		Route{"ToDoApp", "GET", "/user/profile/apps/todo", todo.IndexTodoPage},
 		Route{"ToDoApp", "POST", "/user/profile/apps/todo", todo.IndexTodoPage},
 		//Route{"ToDoApp", "GET", "/user/profile/apps/todo/{todoId}", todo.Show},
-		//Route{"ToDoApp", "GET", "/user/profile/apps/todo/create", todo.CreateTodoPage},
-		//Route{"ToDoApp", "POST", "/user/profile/apps/todo/create", todo.CreateTodoPage},
 		Route{"ToDoApp", "GET", "/user/profile/apps/todo/update/{todoId}", todo.UpdateTodoPage},
 		Route{"ToDoApp", "POST", "/user/profile/apps/todo/update/{todoId}", todo.UpdateTodoPage},
 		Route{"ToDoApp", "GET", "/user/profile/apps/todo/delete/{todoId}", todo.DeleteTodoPage},

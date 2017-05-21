@@ -2,6 +2,10 @@
 {{template "authenticatednavbar"}}
 
 
+{{ $listOfPosts := .PostsLists}}
+{{ $listOfComments := .CommentLists}}
+
+
 <section>
   <div class="row">
     <div class="col m2">
@@ -71,32 +75,102 @@
   <div class="col m2">
 
   </div>
-  <div class="col s12 m5"> 
+  <div class="col s12 m7"> 
       <div id="home-feeds">
-          {{ range $value := .PostsLists}}
+          {{ range $value := $listOfPosts}}
           <div class="card hoverable z-depth-3" id="homePost">
-              
-              <p><h6>{{ $value.Author }} </h6><h6>{{ $value.DatePosted }}</h6></p>
+            <div>
+              <h5>{{ $value.Author }}</h5><h6>{{ $value.DatePosted }}</h6>
             
               <h4 class="blue-text">{{ $value.Topic }}</h4>
               
-              <p><h6>{{ $value.Content }}</h6></p>
+              <p><h5>{{ $value.Content }}</h5></p>
               <p><a href="#">More</a></p>
               <br>
-              <a class="btn gray lighten-4 text-blue">{{ $value.Likes }}</a>
-              <a class="btn gray lighten-4 text-teal">{{ $value.Upvotes }}</a>
-              <a class="btn gray lighten-4 text-red">{{ $value.Downvotes }}</a>
-              <a class="h5 text-teal">Comment</a>
-              <a class="h5 text-blue">Share</a>
+              <div class="container">
+                <div class="row" style="display: inline;" data-inline="true">
+                  <table class="responsive-table">
+                      <thead>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        <tr>
+                          <td>
+                              <form action="/user/home/homepost/liked/{{$value.PostID}}" method="POST">
+                                <button class="btn btn-flat blue darken-3 white-text lighten-5" type="submit" id="btnLike" formmethod="POST" formaction="/user/home/homepost/liked/{{$value.PostID}}">Like</button>
+                              </form>
+                          </td>
+                          <td>
+                              <form action="/user/home/homepost/upvoted/{{$value.PostID}}" method="POST" id="btnUpvotes">
+                                <button class="btn btn-flat white lighten-4 blue-text" type="submit" formmethod="POST" formaction="/user/home/homepost/upvoted/{{$value.PostID}}">Upvote</button>
+                              </form>
+                          </td>
+                          <td>
+                              <form action="/user/home/homepost/downvoted/{{$value.PostID}}" method="POST" id="btnDownvotes">
+                                <button class="btn btn-flat white lighten-4 blue-text" type="submit" formmethod="POST" formaction="/user/home/homepost/downvoted/{{$value.PostID}}">Downvote</button>
+                              </form>              
+                          </td>
+                          <td>
+                              
+                                <button class="btn btn-flat white lighten-4 blue-text">Comment</button>
+                            
+                          </td>
+                          <td>
+                              <form action="/user/home/homepost/shared/{{$value.PostID}}" method="POST" id="btnShare">
+                                <button class="btn btn-flat white lighten-4 blue-text" type="submit" formmethod="POST" formaction="/user/home/homepost/shared/{{$value.PostID}}">Share</button>
+                              </form>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                </div>
+              </div>
+              
+             
+              <div class="container">
+                <div class="row-center">
+                  <a class="blue-text">{{ $value.Likes }} likes</a>
+                  <a class="teal-text">{{ $value.Upvotes }} upvotes</a>
+                  <a class="red-text">{{ $value.Downvotes }} downvotes</a>
+                  <a class="red-text">{{ $value.Comments }} comments</a>
+                  <a class="red-text">? shares</a>
+                </div>
+              </div>
+              <div class="container">
+                <div class="row-center">                                  
+                    <form method="POST" action="/user/home/homepost/commented/{{$value.PostID}}" id="btnCommentPost" accept-charset="utf-8">
+                      <input type="text" name="commentPost" placeholder="comment">
+                      <button class="btn btn-flat white blue-text" name="sendComment" formmethod="POST" formaction="/user/home/homepost/commented/{{$value.PostID}}">Post</button>                    
+                    </form>  
+                </div>
+                <div class="row-center">
+                  <div>
+                    {{ range $commentValue := $listOfComments}}
+                      {{ if eq $commentValue.PostID $value.PostID}}
+                        <p>{{$commentValue.CommentText}}</p>
+                      {{ else }}
+              
+                      {{ end }}  
+                    {{ end }}
+                  </div>                  
+                </div>
+              </div>
+
+            </div>
+
                 
           </div>
           {{ end }}
       </div>
   </div>
   <div class="col m3">
-    
-  </div>
-  <div class="col m2">
     
   </div>
 </div>
