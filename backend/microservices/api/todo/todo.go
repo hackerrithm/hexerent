@@ -3,7 +3,7 @@ package todo
 import (
 	"encoding/json"
 	"fmt"
-	"hexerent/backend/controllers/home"
+	"hexerent/backend/microservices/api/home"
 	"hexerent/backend/models"
 	"net/http"
 	"strconv"
@@ -36,7 +36,7 @@ func jsonResponse(res http.ResponseWriter, data interface{}) string {
 // Index renders the home.html file
 func Index(w http.ResponseWriter, r *http.Request) []models.Todo {
 
-	userID := home.GetUserInformation()
+	userID := home.GetUserIdentification()
 
 	var todoLists = models.RepoFindAllTodos(userID)
 	var v models.Todo
@@ -58,7 +58,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	completed := ""       //r.FormValue("completed")
 	dueDate := r.FormValue("due")
 	dateCreated := time.Now().Local()
-	userID := home.GetUserInformation()
+	userID := home.GetUserIdentification()
 
 	fmt.Println("********* ************** this is userID: ", userID)
 
@@ -92,7 +92,7 @@ func Show(w http.ResponseWriter, r *http.Request) models.Todo {
 	fmt.Println("Todo show:", todoID)
 
 	newID, _ = strconv.ParseUint(todoID, 10, 0)
-	userID := home.GetUserInformation()
+	userID := home.GetUserIdentification()
 
 	todo := models.RepoFindTodo(newID, userID)
 
@@ -105,7 +105,7 @@ func Show(w http.ResponseWriter, r *http.Request) models.Todo {
 // CountTodos returns the reults after counting the number of
 // Todos per user
 func CountTodos(w http.ResponseWriter, r *http.Request) uint64 {
-	userID := home.GetUserInformation()
+	userID := home.GetUserIdentification()
 	return models.RepoFindAllTodosPerUser(userID)
 }
 
@@ -126,7 +126,7 @@ func Update(w http.ResponseWriter, r *http.Request) {
 	completed := r.FormValue("completed")
 	dueDate := r.FormValue("due")
 	dateCreated := time.Now().Local()
-	userID := home.GetUserInformation()
+	userID := home.GetUserIdentification()
 
 	var a = completed
 	var completedTask bool

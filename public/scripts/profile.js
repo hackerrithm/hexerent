@@ -6,11 +6,6 @@ $(document).ready(function(){
   $('ul.tabs').tabs();
 });
 
-$(document).ready(function(){
-  $('#btnHomePost').on('click',function(){
-  $('#home-feeds').prepend('<li>Kemzi</li>')
-});
-});
 
 $('.datepicker').pickadate({
   selectMonths: true, // Creates a dropdown to control month

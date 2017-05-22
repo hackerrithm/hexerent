@@ -2,7 +2,8 @@ package upvote
 
 import (
 	"fmt"
-	"hexerent/backend/controllers/home"
+	"hexerent/backend/microservices/api/home"
+
 	"hexerent/backend/models"
 	"net/http"
 	"strconv"
@@ -23,7 +24,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Post show:", postID)
 		newID, _ = strconv.ParseUint(postID, 10, 0)
 
-		userID := home.GetUserInformation()
+		userID := home.GetUserIdentification()
 		upvote := models.NewUpvote(0, userID, newID, true)
 
 		models.CreateUpvote(upvote, newID, userID)

@@ -2,7 +2,7 @@ package like
 
 import (
 	"fmt"
-	"hexerent/backend/controllers/home"
+	"hexerent/backend/microservices/api/home"
 	"hexerent/backend/models"
 	"net/http"
 	"strconv"
@@ -23,7 +23,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Post show:", postID)
 		newID, _ = strconv.ParseUint(postID, 10, 0)
 
-		userID := home.GetUserInformation()
+		userID := home.GetUserIdentification()
 		like := models.NewLike(0, userID, newID, true)
 
 		models.CreateLike(like, newID, userID)

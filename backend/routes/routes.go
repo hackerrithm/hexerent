@@ -63,6 +63,7 @@ func NewRouter() *mux.Router {
 		Route{"Home", "GET", "/user/home", home.HomePage},
 		Route{"Home", "POST", "/user/home", home.HomePage},
 		Route{"Profile", "GET", "/user/profile", profile.ProfilePage},
+		Route{"Profile", "POST", "/user/profile", profile.ProfilePage},
 		Route{"Logout", "GET", "/user/logout", login.Logout},
 		Route{"Likes", "GET", "/user/home/homepost/liked", like.Create},
 		Route{"Likes", "POST", "/user/home/homepost/liked/{postID}", like.Create},
