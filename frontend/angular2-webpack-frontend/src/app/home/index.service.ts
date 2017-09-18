@@ -30,6 +30,18 @@ export class IndexService {
   public addPost (post: Post): Observable<Post> {
         let headers = new Headers({'Content-Type': 'application/json'});
         let options = new RequestOptions({headers});
+    
+        // add similar code here
+        /*
+        headers.append('Access-Control-Allow-Headers', 'Content-Type');
+        headers.append('Access-Control-Allow-Methods', 'GET');
+        headers.append('Access-Control-Allow-Origin', '*');
+        
+        might have error: XMLHttpRequest cannot load http://URI. 
+        No 'Access-Control-Allow-Origin' header is present on the requested resource. 
+        Origin 'http://localhost:8000' is therefore not allowed access.
+        
+        */
 
         return this.http.post(this.indexURL, { post }, options)
             .map(this.parseData)
